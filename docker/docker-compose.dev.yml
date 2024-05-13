@@ -37,18 +37,18 @@ services:
       - redis
       - database
 
-  immich-microservices:
-    container_name: immich_microservices
-    command: ['/usr/src/app/bin/immich-dev', 'microservices']
-    <<: *server-common
-    # extends:
-    #   file: hwaccel.transcoding.yml
-    #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
-    ports:
-      - 9231:9230
-    depends_on:
-      - database
-      - immich-server
+#  immich-microservices:
+#    container_name: immich_microservices
+#    command: ['/usr/src/app/bin/immich-dev', 'microservices']
+#    <<: *server-common
+#    # extends:
+#    #   file: hwaccel.transcoding.yml
+#    #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
+#    ports:
+#      - 9231:9230
+#    depends_on:
+#      - database
+#      - immich-server
 
   immich-web:
     container_name: immich_web

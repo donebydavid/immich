@@ -4,32 +4,19 @@ import { json } from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { CommandFactory } from 'nest-commander';
 import { existsSync } from 'node:fs';
+import { Worker } from 'node:worker_threads';
 import sirv from 'sirv';
-import { ApiModule, ImmichAdminModule, MicroservicesModule } from 'src/app.module';
+import { ApiModule, ImmichAdminModule } from 'src/app.module';
 import { WEB_ROOT, envName, excludePaths, isDev, serverVersion } from 'src/constants';
 import { LogLevel } from 'src/entities/system-config.entity';
 import { ILoggerRepository } from 'src/interfaces/logger.interface';
+import { bootstrapMicroservices } from 'src/microservices';
 import { WebSocketAdapter } from 'src/middleware/websocket.adapter';
 import { ApiService } from 'src/services/api.service';
 import { otelSDK } from 'src/utils/instrumentation';
 import { useSwagger } from 'src/utils/misc';
 
 const host = process.env.HOST;
-
-async function bootstrapMicroservices() {
-  otelSDK.start();
-
-  const port = Number(process.env.MICROSERVICES_PORT) || 3002;
-  const app = await NestFactory.create(MicroservicesModule, { bufferLogs: true });
-  const logger = await app.resolve(ILoggerRepository);
-  logger.setContext('ImmichMicroservice');
-  app.useLogger(logger);
-  app.useWebSocketAdapter(new WebSocketAdapter(app));
-
-  await (host ? app.listen(port, host) : app.listen(port));
-
-  logger.log(`Immich Microservices is listening on ${await app.getUrl()} [v${serverVersion}] [${envName}] `);
-}
 
 async function bootstrapApi() {
   otelSDK.start();
@@ -86,10 +73,18 @@ async function bootstrapImmichAdmin() {
   await CommandFactory.run(ImmichAdminModule);
 }
 
+function bootstrapMicroservicesWorker() {
+  const worker = new Worker('./dist/microservices.js');
+  worker.on('error', (error) => {
+    console.error(error);
+  });
+}
+
 function bootstrap() {
   switch (immichApp) {
     case 'immich': {
       process.title = 'immich_server';
+      bootstrapMicroservicesWorker();
       return bootstrapApi();
     }
     case 'microservices': {
