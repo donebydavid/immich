@@ -1265,7 +1265,7 @@ describe(MediaService.name, () => {
         '/original/path.ext',
         'upload/encoded-video/user-id/as/se/asset-id.mp4',
         {
-          inputOptions: expect.arrayContaining(['-init_hw_device cuda=cuda:0', '-filter_hw_device cuda']),
+          inputOptions: expect.arrayContaining(['-hwaccel cuda', '-hwaccel_output_format cuda', '-threads 1']),
           outputOptions: expect.arrayContaining([
             '-tune hq',
             '-qmin 0',
@@ -1279,7 +1279,7 @@ describe(MediaService.name, () => {
             '-map 0:1',
             '-g 256',
             '-v verbose',
-            '-vf format=nv12,hwupload_cuda,scale_cuda=-2:720',
+            '-vf hwupload=derive_device=vulkan,scale_vulkan=w=1280:h=720,libplacebo=color_primaries=bt709:color_trc=bt709:colorspace=bt709:deband=true:deband_iterations=3:deband_radius=8:deband_threshold=6:downscaler=none:format=yuv420p:tonemapping=clip:upscaler=none,hwupload=derive_device=cuda',
             '-preset p1',
             '-cq:v 23',
           ]),
@@ -1301,7 +1301,7 @@ describe(MediaService.name, () => {
         '/original/path.ext',
         'upload/encoded-video/user-id/as/se/asset-id.mp4',
         {
-          inputOptions: expect.arrayContaining(['-init_hw_device cuda=cuda:0', '-filter_hw_device cuda']),
+          inputOptions: expect.arrayContaining(['-hwaccel cuda', '-hwaccel_output_format cuda']),
           outputOptions: expect.arrayContaining([expect.stringContaining('-multipass')]),
           twoPass: false,
         },
@@ -1320,7 +1320,7 @@ describe(MediaService.name, () => {
         '/original/path.ext',
         'upload/encoded-video/user-id/as/se/asset-id.mp4',
         {
-          inputOptions: expect.arrayContaining(['-init_hw_device cuda=cuda:0', '-filter_hw_device cuda']),
+          inputOptions: expect.arrayContaining(['-hwaccel cuda', '-hwaccel_output_format cuda']),
           outputOptions: expect.arrayContaining(['-cq:v 23', '-maxrate 10000k', '-bufsize 6897k']),
           twoPass: false,
         },
@@ -1339,7 +1339,7 @@ describe(MediaService.name, () => {
         '/original/path.ext',
         'upload/encoded-video/user-id/as/se/asset-id.mp4',
         {
-          inputOptions: expect.arrayContaining(['-init_hw_device cuda=cuda:0', '-filter_hw_device cuda']),
+          inputOptions: expect.arrayContaining(['-hwaccel cuda', '-hwaccel_output_format cuda']),
           outputOptions: expect.not.stringContaining('-maxrate'),
           twoPass: false,
         },
@@ -1358,7 +1358,7 @@ describe(MediaService.name, () => {
         '/original/path.ext',
         'upload/encoded-video/user-id/as/se/asset-id.mp4',
         {
-          inputOptions: expect.arrayContaining(['-init_hw_device cuda=cuda:0', '-filter_hw_device cuda']),
+          inputOptions: expect.arrayContaining(['-hwaccel cuda', '-hwaccel_output_format cuda']),
           outputOptions: expect.not.arrayContaining([expect.stringContaining('-preset')]),
           twoPass: false,
         },
@@ -1374,7 +1374,7 @@ describe(MediaService.name, () => {
         '/original/path.ext',
         'upload/encoded-video/user-id/as/se/asset-id.mp4',
         {
-          inputOptions: expect.arrayContaining(['-init_hw_device cuda=cuda:0', '-filter_hw_device cuda']),
+          inputOptions: expect.arrayContaining(['-hwaccel cuda', '-hwaccel_output_format cuda']),
           outputOptions: expect.not.arrayContaining([expect.stringContaining('-multipass')]),
           twoPass: false,
         },
